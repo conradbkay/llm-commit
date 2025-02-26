@@ -1,0 +1,13 @@
+{
+  "name": "llm-commit",
+  "version": "1.0.0",
+  "description": "Turns diffs into concise, readable git commit messages",
+  "author": "Conrad Kay",
+  "homepage": "https://github.com/conradbkay/llm-commit",
+  "devDependencies": {
+    "tsx": "^4.19.3"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts"
+  }
+}
