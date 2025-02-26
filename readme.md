@@ -10,6 +10,7 @@ Most of the refinement will likely come in the form of better prompting, or just
 
 ```ini
 ANTHROPIC_API_KEY=
+GROQ_API_KEY=
 ```
 
 ## Roadmap
@@ -17,5 +18,5 @@ ANTHROPIC_API_KEY=
 - Turn into a CLI tool
 - More APIs (Deepseek, openAI, xAI)
 - Run on previous commits
-- Run on commits in date range, manually approve/deny all changes
+- Run on commits in date range, manually approve/deny all changes or ask it to try again
 - Might as well have a frontend for the above
