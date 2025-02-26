@@ -8,7 +8,7 @@ Most of the refinement will likely come in the form of better prompting, or just
 
 ### .env
 
-```txt
+```ini
 ANTHROPIC_API_KEY=
 ```
 
