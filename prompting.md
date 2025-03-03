@@ -16,6 +16,14 @@ Probably need at least one example
 
 Can try telling it what NOT to do
 
+## Context
+
+Entire file structure is fairly cheap so probably just include that
+
+Maybe can get away with just showing diffs
+
+Would be interesting to give it the last `x` commit messages, with some instructions for how to use it
+
 ## Useful Libraries
 
-`@promptbook/utils` has an `unwrap` function to remove any conversational boiletplate like "Here's a concise commit message: " although maybe prompting will be enough to remove those
+`@promptbook/utils` has an `unwrap` function to remove any conversational boiletplate like "Here's a concise commit message: " although prompting might be enough to remove those

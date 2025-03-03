@@ -16,7 +16,8 @@ GROQ_API_KEY=
 ## Roadmap
 
 - Turn into a CLI tool
-- More APIs (Deepseek, openAI, xAI)
+- More APIs (Deepseek, openAI)
+- Benchmarking performance (obviously will be subjective comparison)
 - Run on previous commits
 - Run on commits in date range, manually approve/deny all changes or ask it to try again
 - Might as well have a frontend for the above

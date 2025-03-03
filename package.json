@@ -6,13 +6,15 @@
   "homepage": "https://github.com/conradbkay/llm-commit",
   "devDependencies": {
     "prettier": "^3.5.2",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.3",
+    "vitest": "^3.0.7"
   },
   "scripts": {
     "start": "tsx --env-file=.env src/index.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.37.0",
-    "groq-sdk": "^0.15.0"
+    "groq-sdk": "^0.15.0",
+    "repomix": "^0.2.30"
   }
 }
