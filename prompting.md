@@ -6,6 +6,8 @@
 
 Almost certainly have to nudge it towards writing good commits, rather than replicating what it's seen before
 > Use industry best practices
+> Write like a senior developer who takes pride in their commit messages
+> Explain "why" certain changes were made
 
 First line is always the summary, optional extra text goes after a blank line
 
@@ -24,6 +26,8 @@ Maybe can get away with just showing diffs
 
 Would be interesting to give it the last `x` commit messages, with some instructions for how to use it
 
-## Useful Libraries
+## Experimentation
 
-`@promptbook/utils` has an `unwrap` function to remove any conversational boiletplate like "Here's a concise commit message: " although prompting might be enough to remove those
+The end of the message seems to always be part of the commit message
+
+It'll sometimes use conventional commits, making it always do that would make parsing easier

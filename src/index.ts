@@ -1,20 +1,33 @@
 import { writeFile } from 'fs/promises'
-import { create } from './api/anthropic'
+import { genPrompt } from './prompt'
+import { unwrapResult } from '@promptbook/utils'
+import { configs, create } from './api/anthropic'
+import { readFileSync } from 'fs'
+import { resolve } from 'path'
+
+const diff = readFileSync(resolve('./diff.txt'), 'utf8')
+
+const TOKENS = 1024
 
 async function main() {
   const message = await create({
-    max_tokens: 8192,
+    max_tokens: TOKENS,
     messages: [
       {
         role: 'user',
-        content: `Reply as a 10x senior developer:
-        How would you design a system to generate prompts for an LLM to generate concise, relevant git commit messages?
-        Assume you have access to all data about the repository and file/code changes
-        do NOT generate any code, just describe a general approach for now`
+        content: genPrompt(diff)
       }
     ],
-    model: 'claude-3-5-haiku-latest'
+    ...configs.sonnet_think(TOKENS)
   })
+
+  if (message.content[message.content.length - 1].type !== 'text') {
+    throw new Error('Unexpected output length/type')
+  }
+
+  console.log(
+    unwrapResult((message.content[message.content.length - 1] as any).text)
+  )
 
   await writeFile('output.json', JSON.stringify(message), 'utf8')
 }
