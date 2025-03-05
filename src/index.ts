@@ -1,35 +1,34 @@
 import { writeFile } from 'fs/promises'
 import { genPrompt } from './prompt'
 import { unwrapResult } from '@promptbook/utils'
-import { configs, create } from './api/anthropic'
-import { readFileSync } from 'fs'
-import { resolve } from 'path'
-
-const diff = readFileSync(resolve('./diff.txt'), 'utf8')
+import { generateText } from 'ai'
+import { anthropic } from '@ai-sdk/anthropic'
+import { getDiff } from './api/git'
 
 const TOKENS = 1024
+const THINK_MODE = 'disabled'
 
 async function main() {
-  const message = await create({
-    max_tokens: TOKENS,
-    messages: [
-      {
-        role: 'user',
-        content: genPrompt(diff)
+  const model = anthropic('claude-3-7-sonnet-latest')
+
+  const diff = await getDiff()
+
+  const prompt = genPrompt(diff)
+
+  const message = await generateText({
+    model,
+    maxTokens: TOKENS,
+    ...prompt,
+    providerOptions: {
+      anthropic: {
+        thinking: { type: THINK_MODE, budgetTokens: Math.floor(TOKENS / 2) }
       }
-    ],
-    ...configs.sonnet_think(TOKENS)
+    }
   })
 
-  if (message.content[message.content.length - 1].type !== 'text') {
-    throw new Error('Unexpected output length/type')
-  }
+  console.log(unwrapResult(message.text))
 
-  console.log(
-    unwrapResult((message.content[message.content.length - 1] as any).text)
-  )
-
-  await writeFile('output.json', JSON.stringify(message), 'utf8')
+  await writeFile(model + '.json', JSON.stringify(message), 'utf8')
 }
 
 main()

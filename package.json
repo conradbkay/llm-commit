@@ -4,20 +4,23 @@
   "description": "Turns diffs into concise, readable git commit messages",
   "author": "Conrad Kay",
   "homepage": "https://github.com/conradbkay/llm-commit",
-  "devDependencies": {
-    "lefthook": "^1.11.2",
-    "prettier": "^3.5.2",
-    "tsx": "^4.19.3",
-    "vitest": "^3.0.7"
-  },
   "scripts": {
     "start": "tsx --env-file=.env src/index.ts",
     "prepare": "husky"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.37.0",
+    "@ai-sdk/anthropic": "^1.1.15",
+    "@ai-sdk/deepseek": "^0.1.13",
+    "@ai-sdk/xai": "^1.1.13",
     "@promptbook/utils": "^0.86.10",
-    "groq-sdk": "^0.15.0",
-    "repomix": "^0.2.30"
+    "ai": "^4.1.53",
+    "globby": "~14.0.2",
+    "repomix": "^0.2.30",
+    "simple-git": "^3.27.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "tsx": "^4.19.3",
+    "vitest": "^3.0.7"
   }
 }
