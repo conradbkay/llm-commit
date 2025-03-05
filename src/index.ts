@@ -4,6 +4,7 @@ import { unwrapResult } from '@promptbook/utils'
 import { generateText } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { getDiff } from './api/git'
+import { join } from 'path'
 
 const TOKENS = 1024
 const THINK_MODE = 'disabled'
@@ -28,7 +29,11 @@ async function main() {
 
   console.log(unwrapResult(message.text))
 
-  await writeFile(model + '.json', JSON.stringify(message), 'utf8')
+  await writeFile(
+    join('outputs', model.modelId + '.json'),
+    JSON.stringify(message),
+    'utf8'
+  )
 }
 
 main()
