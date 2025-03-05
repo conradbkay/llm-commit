@@ -20,8 +20,8 @@ set the embedding model in an environment variable
 
 const instructionKeyOrder = [
   // just use a thinking model for these
-  //'logic',
-  //'think-first',
+  'logic',
+  'think-first',
   'examples',
   'brevity'
 ] as const
