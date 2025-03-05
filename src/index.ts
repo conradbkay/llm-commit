@@ -5,6 +5,7 @@ import { generateText } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { getDiff } from './api/git'
 import { join } from 'path'
+import { genFileStructure } from './context'
 
 const TOKENS = 1024
 const THINK_MODE = 'disabled'
@@ -14,7 +15,9 @@ async function main() {
 
   const diff = await getDiff()
 
-  const prompt = genPrompt(diff)
+  const fileStructure = await genFileStructure()
+
+  const prompt = genPrompt({ diff, fileStructure })
 
   const message = await generateText({
     model,

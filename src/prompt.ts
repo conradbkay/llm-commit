@@ -1,5 +1,5 @@
 const system =
-  'You are a senior software engineer working as the lead of a popular open-source project. You are presented with a code diff, and must understand the changes, then write a proper commit message for them. You will be given some examples to understand what the message should look like'
+  "You are a senior software engineer working as the lead of a popular open-source project. You are presented with the codebase's file structure and the commit diff, and must understand the changes, then write a proper commit message for them. You will be given some examples to understand what the message should look like"
 
 // not all of these will be used. See baseDisable and custom based on model
 const instructions = {
@@ -26,13 +26,21 @@ const instructionKeyOrder = [
   'brevity'
 ] as const
 
-export const genPrompt = (
-  diff: string,
-  disableInstructionKeys: string[] = []
-) => {
+export type GenPromptOptions = {
+  diff: string
+  fileStructure: string[]
+  disableInstructionKeys?: string[]
+}
+
+export const genPrompt = ({
+  diff,
+  fileStructure,
+  disableInstructionKeys
+}: GenPromptOptions) => {
   const base = instructionKeyOrder
     .filter(
-      (key) => key in instructions && !disableInstructionKeys.includes(key)
+      (key) =>
+        key in instructions && !(disableInstructionKeys || []).includes(key)
     )
     .map((key) => instructions[key])
     .join('')
@@ -42,7 +50,10 @@ export const genPrompt = (
     system,
     messages: [
       // apparently long context (20k+) at the top performs a lot better, but can test for shorter
-      { role: 'user' as const, content: `<diff>${diff}</diff>\n\n${base}` }
+      {
+        role: 'user' as const,
+        content: `<diff>${diff}</diff>\n\n<files>${fileStructure.join('\n')}\n${base}`
+      }
       // causes error for think mode
       /*{
         role: 'assistant' as const,
