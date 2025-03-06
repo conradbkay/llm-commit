@@ -2,16 +2,14 @@
   "name": "llm-commit",
   "type": "module",
   "version": "1.0.0",
-  "bin": {
-    "llm-commit": "node ./bin/run"
-  },
+  "bin": "./bin/llm-commit.cjs",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "description": "Turns diffs into concise, readable git commit messages",
   "author": "Conrad Kay",
   "homepage": "https://github.com/conradbkay/llm-commit",
   "scripts": {
-    "start": "tsx --env-file=.env src/index.ts",
+    "start": "tsx src/index.ts",
     "test": "vitest",
     "clean": "rimraf lib",
     "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration"
@@ -23,6 +21,7 @@
     "@promptbook/utils": "^0.86.10",
     "ai": "^4.1.53",
     "commander": "^13.1.0",
+    "dotenv": "^16.4.7",
     "globby": "~14.0.2",
     "picocolors": "^1.1.1",
     "repomix": "^0.2.30",

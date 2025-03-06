@@ -1,7 +1,10 @@
-import { getLog } from './git'
+import { getLog } from './git.js'
 
-// ! force pushes
-export const editPriorCommits = async (after: Date) => {
+// ! rewriting history is dangerous
+export const editPriorCommits = async (
+  genMessage: () => Promise<string>,
+  after: Date
+) => {
   const commits = await getLog()
 
   return commits

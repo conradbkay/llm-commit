@@ -1,11 +1,14 @@
+import { config } from 'dotenv'
+config()
+
 import { writeFile } from 'fs/promises'
-import { genPrompt } from './prompt'
 import { unwrapResult } from '@promptbook/utils'
 import { generateText } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
-import { getDiff } from './git'
 import { join } from 'path'
-import { genFileStructure } from './context'
+import { genPrompt } from './prompt.js'
+import { genFileStructure } from './context.js'
+import { getDiff } from './git.js'
 
 const TOKENS = 1024
 const THINK_MODE = 'disabled'
