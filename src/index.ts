@@ -3,7 +3,7 @@ import { genPrompt } from './prompt'
 import { unwrapResult } from '@promptbook/utils'
 import { generateText } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
-import { getDiff } from './api/git'
+import { getDiff } from './git'
 import { join } from 'path'
 import { genFileStructure } from './context'
 

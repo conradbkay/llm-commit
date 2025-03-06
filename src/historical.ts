@@ -1,3 +1,8 @@
-export const editPriorCommits = (after: Date) => {
-  // start from most recent then backtrack
+import { getLog } from './git'
+
+// ! force pushes
+export const editPriorCommits = async (after: Date) => {
+  const commits = await getLog()
+
+  return commits
 }

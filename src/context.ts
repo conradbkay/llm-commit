@@ -1,4 +1,3 @@
-import { readFile } from 'fs/promises'
 import { globby } from 'globby'
 // could trim to ignoring any folders that don't contain an edited file
 export const genFileStructure = async (patterns: string | string[] = '**') => {
