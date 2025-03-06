@@ -32,7 +32,7 @@ Client side can add `package-lock.json -diff` to `.gitattributes`
 
 ## Roadmap
 
-- Turn into a CLI tool
+- Better loading indicators
 - Benchmarking performance (obviously will be subjective comparison)
 - Run on previous commits
 - Run on commits in date range, manually approve/deny all changes or ask it to try again

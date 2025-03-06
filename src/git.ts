@@ -2,11 +2,30 @@ import { simpleGit } from 'simple-git'
 
 const git = simpleGit()
 
+export type DiffOptions = {
+  prev?: number
+  cached?: boolean
+}
+
 // prev=2 means 2nd most recent commit
-export const getDiff = async (prev?: number) => {
-  const diff = await git.diff(
-    typeof prev === 'number' ? [`HEAD~${prev}`] : undefined
-  )
+export const getDiff = async ({ prev, cached }: DiffOptions) => {
+  let diffConfig: string[] = []
+
+  if (typeof prev === 'number') {
+    diffConfig.push(`HEAD~${prev}`)
+  }
+
+  if (cached) {
+    diffConfig.push('--cached')
+  }
+
+  const diff = await git.diff(diffConfig)
+
+  if (!diff) {
+    throw new Error(
+      'No diff found. Did you already `git add` the changes and meant to pass `--cached`?'
+    )
+  }
 
   return diff
 }

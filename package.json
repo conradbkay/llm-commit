@@ -23,6 +23,7 @@
     "commander": "^13.1.0",
     "dotenv": "^16.4.7",
     "globby": "~14.0.2",
+    "ora": "^8.2.0",
     "picocolors": "^1.1.1",
     "repomix": "^0.2.30",
     "rimraf": "^6.0.1",
