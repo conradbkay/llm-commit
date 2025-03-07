@@ -1,5 +1,5 @@
 const system =
-  "You are a senior software engineer working as the lead of a popular open-source project. You are presented with the codebase's file structure and the commit diff, and must understand the changes, then write a proper commit message for them. You will be given some examples to understand what the message should look like"
+  "You are a senior software engineer working as the lead of a popular open-source project. You are presented with the codebase's file structure and the commit diff, and must understand the changes, then write a proper commit message for them"
 
 // not all of these will be used. See baseDisable and custom based on model
 const instructions = {
@@ -28,16 +28,12 @@ to have intimate knowledge of how the pipes work.</example>`,
   'think-first':
     '\n\nPlease make sure your commit message comes after any thinking/reasoning about the code changes',
   brevity:
-    '\n\nMake sure the summary is less than 75 characters, and ideally under 50 characters long. The body is optional and can be however long'
+    '\n\nMake sure the summary is less than 75 characters, and ideally under 50 characters long. Do not include a body unless it is necessary'
 } as const
 
-const instructionKeyOrder = [
-  // just use a thinking model for these
-  //'logic',
-  //'think-first',
-  'examples',
-  'brevity'
-] as const
+const thinkingInstructionKeys = ['logic', 'think-first']
+
+const instructionKeyOrder = ['examples', 'brevity'] as const
 
 export type GenPromptOptions = {
   diff: string
@@ -62,16 +58,11 @@ export const genPrompt = ({
   return {
     system,
     messages: [
-      // apparently long context (20k+) at the top performs a lot better, but can test for shorter
+      // apparently long context (20k+) at the top performs a lot better so put diff there
       {
         role: 'user' as const,
         content: `<diff>${diff}</diff>\n\n<files>${fileStructure.join('\n')}\n${base}`
       }
-      // causes error for think mode
-      /*{
-        role: 'assistant' as const,
-        content: 'The first change to the code is'
-      }*/
     ]
   }
 }

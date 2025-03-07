@@ -5,9 +5,6 @@ import process from 'node:process'
 import { OptionValues, program } from 'commander'
 import pc from 'picocolors'
 import { oraPromise } from 'ora'
-import { anthropic } from '@ai-sdk/anthropic'
-import { xai } from '@ai-sdk/xai'
-import { deepseek } from '@ai-sdk/deepseek'
 // todo make us not have to write file extension
 import { DEFAULT_TOKENS, defaultProvider, providerData } from './constants.js'
 import { genCommitMessage } from './genMessage.js'
@@ -67,7 +64,7 @@ export const runCli = async (
   }: CliOptions
 ) => {
   if (!provider) {
-    console.log('Defaulting to ', defaultProvider + '...')
+    console.log(`Defaulting to ${defaultProvider}...`)
     provider = defaultProvider
   }
 
@@ -83,16 +80,20 @@ export const runCli = async (
 
   const model = sdkProvider(useModelId)
 
-  await oraPromise(
-    genCommitMessage({
-      model,
-      maxTokens: maxTokens || DEFAULT_TOKENS,
-      reasonTokens,
-      outPath,
-      silent,
-      diffOptions: { cached }
-    })
-  )
+  try {
+    await oraPromise(
+      genCommitMessage({
+        model,
+        maxTokens: maxTokens || DEFAULT_TOKENS,
+        reasonTokens,
+        outPath,
+        silent,
+        diffOptions: { cached }
+      })
+    )
+  } catch (err) {
+    console.error(err)
+  }
 }
 
 // tries to find close matches/shorthands
