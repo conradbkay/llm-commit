@@ -5,6 +5,8 @@ import { xai } from '@ai-sdk/xai'
 
 export const DEFAULT_TOKENS = 512
 
+export const ANTHROPIC_MIN_THINK_BUDGET = 1024
+
 // for "names" property can probably autogenerate those
 // if we had a list of model ids we could include that here and be able to map modelId to provider
 export const providerData = {

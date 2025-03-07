@@ -80,6 +80,8 @@ export const runCli = async (
 
   const model = sdkProvider(useModelId)
 
+  console.log('Running ' + useModelId)
+
   try {
     await oraPromise(
       genCommitMessage({

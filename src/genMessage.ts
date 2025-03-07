@@ -3,6 +3,7 @@ import { genFileStructure } from './context.js'
 import { DiffOptions, getDiff } from './git.js'
 import { genPrompt } from './prompt.js'
 import { writeFile } from 'fs/promises'
+import { ANTHROPIC_MIN_THINK_BUDGET } from './constants.js'
 
 export type GenCommitMessageOptions = {
   model: LanguageModel
@@ -40,7 +41,7 @@ export const genCommitMessage = async ({
       anthropic: {
         thinking: {
           type: reasonTokens ? 'enabled' : 'disabled',
-          budgetTokens: Math.max(1024, reasonTokens || 0) // anthropic minimum
+          budgetTokens: Math.max(ANTHROPIC_MIN_THINK_BUDGET, reasonTokens || -1)
         }
       }
     }
@@ -51,6 +52,13 @@ export const genCommitMessage = async ({
   }
 
   if (outPath) {
-    await writeFile(outPath, JSON.stringify(llmResult), 'utf8')
+    try {
+      await writeFile(outPath, JSON.stringify(llmResult), 'utf8')
+    } catch (writeError) {
+      // We don't want to fail the entire operation if just the output file fails
+      console.error(
+        `Warning: Failed to write output to ${outPath}: ${writeError.message}`
+      )
+    }
   }
 }
