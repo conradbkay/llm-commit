@@ -94,7 +94,12 @@ export const runCli = async (
       })
     )
   } catch (err) {
-    console.error(err)
+    // seems like ai-sdk already handles any retryable errors, just error includes a lot of the request and res which seems unnecessary
+    if ('data' in err && 'error' in err.data) {
+      console.error(err.data.error.type + '\n' + err.data.error.message)
+    } else {
+      console.error(err)
+    }
   }
 }
 
