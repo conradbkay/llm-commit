@@ -100,6 +100,8 @@ export const runCli = async (
     } else {
       console.error(err)
     }
+
+    process.exit(1)
   }
 }
 

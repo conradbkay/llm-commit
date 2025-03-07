@@ -31,6 +31,7 @@ export const getDiff = async ({ prev, cached }: DiffOptions) => {
 }
 
 // git date format is pretty broad, can say "yesterday" etc
+// ! make sure after isn't user generated
 export const getLog = async (after?: string) => {
   const { all } = await git.log(after ? { '--after': after } : {})
 

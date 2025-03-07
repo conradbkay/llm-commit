@@ -4,12 +4,14 @@
 
 <https://cbea.ms/git-commit/> writing good commit messages
 
+- Probably should automatically add --staged if no diff found, or just have that as default
 - Interface for providing more custom args <http://sdk.vercel.ai/docs/ai-sdk-core/settings>
 - Performance Benchmarking (manual)
 - Run on previous commits
 - Run on commits in date range, manually approve/deny all changes or ask it to try again
 - Might as well have a frontend for the above
 - Maybe it'll handle doing several commits from one prompt well, which would reduce cost a lot if using a lot of general codebase context
+- More useful (as in not better libs to do same thing) to have it grade commit messages and suggest improvements
 
 ## Misc
 
