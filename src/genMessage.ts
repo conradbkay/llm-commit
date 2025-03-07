@@ -9,7 +9,7 @@ export type GenCommitMessageOptions = {
   maxTokens: number
   reasonTokens?: number
   outPath?: string
-  printCommit?: boolean
+  silent?: boolean
   thinkTokens?: boolean
   diffOptions?: DiffOptions
 }
@@ -19,7 +19,7 @@ export const genCommitMessage = async ({
   maxTokens,
   reasonTokens,
   outPath,
-  printCommit,
+  silent,
   diffOptions
 }: GenCommitMessageOptions) => {
   const diff = await getDiff(diffOptions || {})
@@ -46,8 +46,8 @@ export const genCommitMessage = async ({
     }
   })
 
-  if (printCommit) {
-    console.log(llmResult.text)
+  if (!silent) {
+    console.log('\n' + llmResult.text)
   }
 
   if (outPath) {
