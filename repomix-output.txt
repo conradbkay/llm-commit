@@ -1,0 +1,977 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+
+Additional Info:
+----------------
+
+================================================================
+Directory Structure
+================================================================
+.gitattributes
+.gitignore
+.npmignore
+.prettierrc
+bin/llm-commit.cjs
+package.json
+prompting.md
+readme.md
+roadmap.md
+src/cli.ts
+src/constants.ts
+src/context.ts
+src/defaultIgnore.ts
+src/genMessage.ts
+src/git.ts
+src/historical.ts
+src/index.ts
+src/postprocess.ts
+src/prompt.ts
+tsconfig.build.json
+vitest.config.js
+
+================================================================
+Files
+================================================================
+
+================
+File: .gitattributes
+================
+# Auto detect text files and perform LF normalization
+* text=auto
+
+package-lock.json -diff
+
+================
+File: .gitignore
+================
+lib/
+
+node_modules/
+outputs/
+diff.txt
+.vscode
+.env
+
+================
+File: .npmignore
+================
+.env
+diff.txt
+outputs/
+prompting.md
+roadmap.md
+
+# Source files
+src/
+
+# Test files
+tests/
+coverage/
+
+# Configuration files
+tsconfig.json
+tsconfig.build.json
+.eslintrc.js
+eslint.config.mjs
+prettier.config.mjs
+vite.config.ts
+biome.json
+
+# Git files
+.gitignore
+.git
+
+# CI files
+.github/
+
+# yarn files
+.yarn
+
+# ESLint files
+.eslintcache
+
+# Config files
+.editorconfig
+.node-version
+.tool-versions
+repomix.config.js
+
+# Editor files
+.vscode/
+.idea/
+.memo/
+
+# Logs
+*.log
+
+# Repomix output
+repomix-output.txt
+
+# Development scripts
+scripts/
+
+# Documentation files (except README and LICENSE)
+docs/
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# biome
+.biome/
+
+# Website
+website/
+
+# Devcontainer
+.devcontainer/
+
+================
+File: .prettierrc
+================
+{
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "semi": false,
+  "singleQuote": true,
+  "printWidth": 80
+}
+
+================
+File: bin/llm-commit.cjs
+================
+#!/usr/bin/env node
+
+const EXIT_CODES = {
+  SUCCESS: 0,
+  ERROR: 1
+}
+
+function setupErrorHandlers() {
+  process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error)
+    process.exit(EXIT_CODES.ERROR)
+  })
+
+  process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Promise Rejection:', reason)
+    process.exit(EXIT_CODES.ERROR)
+  })
+
+  function shutdown() {
+    process.exit(EXIT_CODES.SUCCESS)
+  }
+
+  process.on('SIGINT', () => {
+    console.log('\nReceived SIGINT. Shutting down...')
+    shutdown()
+  })
+  process.on('SIGTERM', shutdown)
+}
+
+;(async () => {
+  try {
+    setupErrorHandlers()
+
+    const { run } = await import('../lib/cli.js')
+    await run()
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Fatal Error:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      })
+    } else {
+      console.error('Fatal Error:', error)
+    }
+
+    process.exit(EXIT_CODES.ERROR)
+  }
+})()
+
+================
+File: package.json
+================
+{
+  "name": "llm-commit",
+  "type": "module",
+  "version": "1.0.0",
+  "bin": {
+    "llm-commit": "bin/llm-commit.cjs"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "description": "Turns diffs into concise, readable git commit messages",
+  "author": "Conrad Kay",
+  "homepage": "https://github.com/conradbkay/llm-commit",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "test": "vitest",
+    "clean": "rimraf lib",
+    "build": "npm run clean && tsc -p tsconfig.build.json --sourceMap --declaration"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.15",
+    "@ai-sdk/deepseek": "^0.1.13",
+    "@ai-sdk/openai": "^1.2.1",
+    "@ai-sdk/xai": "^1.1.13",
+    "@promptbook/utils": "^0.86.10",
+    "ai": "^4.1.53",
+    "commander": "^13.1.0",
+    "dotenv": "^16.4.7",
+    "globby": "~14.0.2",
+    "ora": "^8.2.0",
+    "picocolors": "^1.1.1",
+    "repomix": "^0.2.30",
+    "rimraf": "^6.0.1",
+    "simple-git": "^3.27.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7"
+  },
+  "keywords": [
+    "LLM",
+    "Commit",
+    "Git"
+  ]
+}
+
+================
+File: prompting.md
+================
+# Prompting
+
+Likely need some context for the repo and project
+
+Almost certainly have to nudge it towards writing good commits, rather than replicating what it's seen before
+> Use industry best practices
+> Write like a senior developer who takes pride in their commit messages
+> Explain "why" certain changes were made
+
+Slight chance naming a few very popular repos will help
+> Write in the style used in the linux kernel
+
+## Context
+
+Entire file structure is fairly cheap so probably just include that
+
+Would be nice to have custom examples for whatever the current repo does
+
+## Experimentation
+
+The end of the message seems to always be part of the commit message
+
+It'll sometimes use conventional commits, making it always do that would make parsing easier
+
+================
+File: readme.md
+================
+# LLM Commit
+
+Turn diffs into somewhat accurate commit messages
+
+## Setup
+
+Run `llm-commit --help` to see a list of options
+
+### .env
+
+Looks for a .env file in the project root
+
+Follows <https://sdk.vercel.ai/providers/ai-sdk-providers> defaults
+
+```ini
+ANTHROPIC_API_KEY=
+XAI_API_KEY=
+DEEPSEEK_API_KEY=
+```
+
+<https://harper.blog/2024/03/11/use-an-llm-to-automagically-generate-meaningful-git-commit-messages/> basic idea
+
+================
+File: roadmap.md
+================
+# Roadmap
+
+<https://repomix.com/guide/> some ideas for giving code to LLMs
+
+<https://cbea.ms/git-commit/> writing good commit messages
+
+- Interface for providing more custom args <http://sdk.vercel.ai/docs/ai-sdk-core/settings>
+- Performance Benchmarking (manual)
+- Run on previous commits
+- Run on commits in date range, manually approve/deny all changes or ask it to try again
+- Might as well have a frontend for the above
+- Maybe it'll handle doing several commits from one prompt well, which would reduce cost a lot if using a lot of general codebase context
+
+## Misc
+
+Diff is ugly to present usually, maybe some react package for that
+
+Probably prefer diffs in plain format since training data might work with diffs, but could try out something like diff/parse-diff/parse-git-diff
+
+### Beyond .gitignore
+
+Certain files should be commited but their diff not used for generating the message
+
+- lockfiles
+- certain file types (.bin)
+- any very large diff
+
+Client side can add `package-lock.json -diff` to `.gitattributes`
+
+================
+File: src/cli.ts
+================
+import { config } from 'dotenv'
+config()
+
+import process from 'node:process'
+import { OptionValues, program } from 'commander'
+import pc from 'picocolors'
+import { oraPromise } from 'ora'
+// todo make us not have to write file extension
+import { DEFAULT_TOKENS, defaultProvider, providerData } from './constants.js'
+import { genCommitMessage } from './genMessage.js'
+
+export const run = async () => {
+  try {
+    program
+      .description(
+        `${pc.greenBright('LLM Commit')} - Turn diffs into somewhat accurate commit messages`
+      )
+      .option('-p, --provider <provider>', 'LLM provider')
+      .option('-m, --model-id <id>', 'model id')
+      .option('-t, --max-tokens <tokens>', 'max tokens')
+      .option('-o, --out-path <path>', 'write path for full LLM output')
+      .option(
+        '-r, --reason-tokens <reasonTokens>',
+        'enable reasoning/thinking for eligible models'
+      )
+      .option(
+        '-s, --silent',
+        'do not print output (should only be used with --out-path)'
+      )
+      .option('-c, --cached', 'whether to use staged files for git diff')
+      .action(commanderActionEndpoint)
+
+    await program.parseAsync(process.argv)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export type CliOptions = OptionValues &
+  Partial<{
+    provider: string
+    modelId: string
+    maxTokens: number
+    reasonTokens: number
+    outPath: string
+    silent: boolean
+    cached: boolean
+  }>
+
+const commanderActionEndpoint = async (options: CliOptions = {}) => {
+  await runCli(process.cwd(), options)
+}
+
+export const runCli = async (
+  cwd: string,
+  {
+    modelId,
+    maxTokens,
+    outPath,
+    reasonTokens,
+    silent,
+    cached,
+    provider
+  }: CliOptions
+) => {
+  if (!provider) {
+    console.log(`Defaulting to ${defaultProvider}...`)
+    provider = defaultProvider
+  }
+
+  const useProviderKey = convertProviderInput(provider)
+
+  if (!(useProviderKey! in providerData)) {
+    throw new Error(`provider "${provider}" not recognized`)
+  }
+
+  const { defaultModelId, sdkProvider } = providerData[useProviderKey!]
+
+  const useModelId = modelId || defaultModelId
+
+  const model = sdkProvider(useModelId)
+
+  console.log('Running ' + useModelId)
+
+  try {
+    await oraPromise(
+      genCommitMessage({
+        model,
+        maxTokens: maxTokens || DEFAULT_TOKENS,
+        reasonTokens,
+        outPath,
+        silent,
+        diffOptions: { cached }
+      })
+    )
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+// tries to find close matches/shorthands
+const convertProviderInput = (rawInput: string) => {
+  const normalized = rawInput.toLowerCase().trim()
+
+  for (const provider in providerData) {
+    if (providerData[provider].names.includes(normalized)) {
+      return provider
+    }
+  }
+
+  return null
+}
+
+================
+File: src/constants.ts
+================
+import { anthropic } from '@ai-sdk/anthropic'
+import { deepseek } from '@ai-sdk/deepseek'
+import { openai } from '@ai-sdk/openai'
+import { xai } from '@ai-sdk/xai'
+
+export const DEFAULT_TOKENS = 512
+
+export const ANTHROPIC_MIN_THINK_BUDGET = 1024
+
+// for "names" property can probably autogenerate those
+// if we had a list of model ids we could include that here and be able to map modelId to provider
+export const providerData = {
+  anthropic: {
+    defaultModelId: 'claude-3-7-sonnet-latest',
+    sdkProvider: anthropic,
+    names: ['anthropic', 'an', 'ant', 'claude', 'haiku']
+  },
+  openai: {
+    defaultModelId: 'gpt-4o',
+    sdkProvider: openai,
+    names: ['openai']
+  },
+  deepseek: {
+    defaultModelId: 'deepseek-reasoner',
+    sdkProvider: deepseek,
+    names: ['deepseek', 'r1', 'de', 'ds']
+  },
+  xai: {
+    defaultModelId: 'groq-beta',
+    sdkProvider: xai,
+    names: ['xai', 'x'] // don't include groq since that's actually a different provider
+  }
+} as const
+
+export const defaultProvider = 'anthropic'
+
+================
+File: src/context.ts
+================
+import { globby } from 'globby'
+// could trim to ignoring any folders that don't contain an edited file
+export const genFileStructure = async (patterns: string | string[] = '**') => {
+  const paths = await globby(patterns, { gitignore: true, onlyFiles: true })
+
+  return paths
+}
+
+const formatCommitDiff = (diff: string) => {
+  return diff
+}
+
+================
+File: src/defaultIgnore.ts
+================
+// pasted directly from https://github.com/yamadashy/repomix/blob/07e1e54c9b06c21c7514e52cf5a0913b98609905/src/config/defaultIgnore.ts
+
+export const defaultIgnoreList = [
+  // Version control
+  '.git/**',
+  '.hg/**',
+  '.hgignore',
+  '.svn/**',
+
+  // Dependency directories
+  '**/node_modules/**',
+  '**/bower_components/**',
+  '**/jspm_packages/**',
+  'vendor/**',
+  '**/.bundle/**',
+  '**/.gradle/**',
+  'target/**',
+
+  // Logs
+  'logs/**',
+  '**/*.log',
+  '**/npm-debug.log*',
+  '**/yarn-debug.log*',
+  '**/yarn-error.log*',
+
+  // Runtime data
+  'pids/**',
+  '*.pid',
+  '*.seed',
+  '*.pid.lock',
+
+  // Directory for instrumented libs generated by jscoverage/JSCover
+  'lib-cov/**',
+
+  // Coverage directory used by tools like istanbul
+  'coverage/**',
+
+  // nyc test coverage
+  '.nyc_output/**',
+
+  // Grunt intermediate storage
+  '.grunt/**',
+
+  // node-waf configuration
+  '.lock-wscript',
+
+  // Compiled binary addons
+  'build/Release/**',
+
+  // TypeScript v1 declaration files
+  'typings/**',
+
+  // Optional npm cache directory
+  '**/.npm/**',
+
+  // Cache directories
+  '.eslintcache',
+  '.rollup.cache/**',
+  '.webpack.cache/**',
+  '.parcel-cache/**',
+  '.sass-cache/**',
+  '*.cache',
+
+  // Optional REPL history
+  '.node_repl_history',
+
+  // Output of 'npm pack'
+  '*.tgz',
+
+  // Yarn files
+  '**/.yarn/**',
+
+  // Yarn Integrity file
+  '**/.yarn-integrity',
+
+  // dotenv environment variables file
+  '.env',
+
+  // next.js build output
+  '.next/**',
+
+  // nuxt.js build output
+  '.nuxt/**',
+
+  // vuepress build output
+  '.vuepress/dist/**',
+
+  // Serverless directories
+  '.serverless/**',
+
+  // FuseBox cache
+  '.fusebox/**',
+
+  // DynamoDB Local files
+  '.dynamodb/**',
+
+  // TypeScript output
+  'dist/**',
+
+  // OS generated files
+  '**/.DS_Store',
+  '**/Thumbs.db',
+
+  // Editor directories and files
+  '.idea/**',
+  '.vscode/**',
+  '**/*.swp',
+  '**/*.swo',
+  '**/*.swn',
+  '**/*.bak',
+
+  // Build outputs
+  'build/**',
+  'out/**',
+
+  // Temporary files
+  'tmp/**',
+  'temp/**',
+
+  // repomix output
+  '**/repomix-output.*',
+  '**/repopack-output.*', // Legacy
+
+  // Essential Node.js-related entries
+  '**/package-lock.json',
+  '**/yarn-error.log',
+  '**/yarn.lock',
+  '**/pnpm-lock.yaml',
+  '**/bun.lockb',
+
+  // Essential Python-related entries
+  '**/__pycache__/**',
+  '**/*.py[cod]',
+  '**/venv/**',
+  '**/.venv/**',
+  '**/.pytest_cache/**',
+  '**/.mypy_cache/**',
+  '**/.ipynb_checkpoints/**',
+  '**/Pipfile.lock',
+  '**/poetry.lock',
+
+  // Essential Rust-related entries
+  '**/Cargo.lock',
+  '**/Cargo.toml.orig',
+  '**/target/**',
+  '**/*.rs.bk',
+
+  // Essential PHP-related entries
+  '**/composer.lock',
+
+  // Essential Ruby-related entries
+  '**/Gemfile.lock',
+
+  // Essential Go-related entries
+  '**/go.sum',
+
+  // Essential Elixir-related entries
+  '**/mix.lock',
+
+  // Essential Haskell-related entries
+  '**/stack.yaml.lock',
+  '**/cabal.project.freeze'
+]
+
+================
+File: src/genMessage.ts
+================
+import { generateText, LanguageModel } from 'ai'
+import { genFileStructure } from './context.js'
+import { DiffOptions, getDiff } from './git.js'
+import { genPrompt } from './prompt.js'
+import { writeFile } from 'fs/promises'
+import { ANTHROPIC_MIN_THINK_BUDGET } from './constants.js'
+
+export type GenCommitMessageOptions = {
+  model: LanguageModel
+  maxTokens: number
+  reasonTokens?: number
+  outPath?: string
+  silent?: boolean
+  thinkTokens?: boolean
+  diffOptions?: DiffOptions
+}
+
+export const genCommitMessage = async ({
+  model,
+  maxTokens,
+  reasonTokens,
+  outPath,
+  silent,
+  diffOptions
+}: GenCommitMessageOptions) => {
+  const diff = await getDiff(diffOptions || {})
+
+  const fileStructure = await genFileStructure()
+
+  const prompt = genPrompt({
+    diff,
+    fileStructure,
+    disableInstructionKeys: reasonTokens ? ['logic'] : undefined
+  })
+
+  const llmResult = await generateText({
+    model,
+    maxTokens,
+    ...prompt,
+    providerOptions: {
+      anthropic: {
+        thinking: {
+          type: reasonTokens ? 'enabled' : 'disabled',
+          budgetTokens: Math.max(ANTHROPIC_MIN_THINK_BUDGET, reasonTokens || -1)
+        }
+      }
+    }
+  })
+
+  if (!silent) {
+    console.log('\n' + llmResult.text)
+  }
+
+  if (outPath) {
+    try {
+      await writeFile(outPath, JSON.stringify(llmResult), 'utf8')
+    } catch (writeError) {
+      // We don't want to fail the entire operation if just the output file fails
+      console.error(
+        `Warning: Failed to write output to ${outPath}: ${writeError.message}`
+      )
+    }
+  }
+}
+
+================
+File: src/git.ts
+================
+import { simpleGit } from 'simple-git'
+
+const git = simpleGit()
+
+export type DiffOptions = {
+  prev?: number
+  cached?: boolean
+}
+
+// prev=2 means 2nd most recent commit
+export const getDiff = async ({ prev, cached }: DiffOptions) => {
+  let diffConfig: string[] = []
+
+  if (typeof prev === 'number') {
+    diffConfig.push(`HEAD~${prev}`)
+  }
+
+  if (cached) {
+    diffConfig.push('--cached')
+  }
+
+  const diff = await git.diff(diffConfig)
+
+  if (!diff) {
+    throw new Error(
+      'No diff found. Did you already `git add` the changes and meant to pass `--cached`?'
+    )
+  }
+
+  return diff
+}
+
+// git date format is pretty broad, can say "yesterday" etc
+export const getLog = async (after?: string) => {
+  const { all } = await git.log(after ? { '--after': after } : {})
+
+  return all
+}
+
+================
+File: src/historical.ts
+================
+import { getLog } from './git.js'
+
+// ! rewriting history is dangerous
+export const editPriorCommits = async (
+  genMessage: () => Promise<string>,
+  after: Date
+) => {
+  const commits = await getLog()
+
+  return commits
+}
+
+================
+File: src/index.ts
+================
+import { config } from 'dotenv'
+config()
+
+import { anthropic } from '@ai-sdk/anthropic'
+import { genCommitMessage } from './genMessage'
+import { join } from 'path'
+import { DEFAULT_TOKENS } from './constants'
+
+const main = async () => {
+  const model = anthropic('claude-3-7-sonnet-latest')
+
+  await genCommitMessage({
+    model,
+    maxTokens: DEFAULT_TOKENS,
+    outPath: join('outputs', model.modelId + '.json')
+  })
+}
+
+main()
+
+================
+File: src/postprocess.ts
+================
+import { unwrapResult } from '@promptbook/utils'
+
+export const postprocess = (output: string) => {
+  return unwrapResult(output)
+}
+
+================
+File: src/prompt.ts
+================
+const system =
+  "You are a senior software engineer working as the lead of a popular open-source project. You are presented with the codebase's file structure and the commit diff, and must understand the changes, then write a proper commit message for them"
+
+// not all of these will be used. See baseDisable and custom based on model
+const instructions = {
+  logic:
+    "\n\nBefore outputting the commit, think for a few sentences about what the diffs mean, creating a list of changes. Make sure the summary generalizes to most of the changes and doesn't just focus on one. Try generating a summary, then saying whether it is general, comprehensive, and concise then trying to make a better one. Use that one in your final message rather than coming up with a separate summary. Do Not Hallucinate",
+  examples: `\n\n<example>
+use locally hosted ollama llm, nomic-embed-text model
+</example>
+
+<example>
+set the embedding model in an environment variable
+</example>
+
+<example>
+fs/pipe: add simpler helpers for common cases
+
+The fix to atomically read the pipe head and tail state when not holding
+the pipe mutex has caused a number of headaches due to the size change
+of the involved types.
+
+It turns out that we don't have _that_ many places that access these
+fields directly and were affected, but we have more than we strictly
+should have, because our low-level helper functions have been designed
+to have intimate knowledge of how the pipes work.</example>`,
+
+  'think-first':
+    '\n\nPlease make sure your commit message comes after any thinking/reasoning about the code changes',
+  brevity:
+    '\n\nMake sure the summary is less than 75 characters, and ideally under 50 characters long. Do not include a body unless it is necessary'
+} as const
+
+const thinkingInstructionKeys = ['logic', 'think-first']
+
+const instructionKeyOrder = ['examples', 'brevity'] as const
+
+export type GenPromptOptions = {
+  diff: string
+  fileStructure: string[]
+  disableInstructionKeys?: string[]
+}
+
+export const genPrompt = ({
+  diff,
+  fileStructure,
+  disableInstructionKeys
+}: GenPromptOptions) => {
+  const base = instructionKeyOrder
+    .filter(
+      (key) =>
+        key in instructions && !(disableInstructionKeys || []).includes(key)
+    )
+    .map((key) => instructions[key])
+    .join('')
+    .trim()
+
+  return {
+    system,
+    messages: [
+      // apparently long context (20k+) at the top performs a lot better so put diff there
+      {
+        role: 'user' as const,
+        content: `<diff>${diff}</diff>\n\n<files>${fileStructure.join('\n')}\n${base}`
+      }
+    ]
+  }
+}
+
+================
+File: tsconfig.build.json
+================
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "es2016",
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "lib": ["es2022"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "types": ["node"]
+  }
+}
+
+================
+File: vitest.config.js
+================
+import { configDefaults, defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    exclude: [...configDefaults.exclude]
+  }
+})
+
+
+
+================================================================
+End of Codebase
+================================================================
