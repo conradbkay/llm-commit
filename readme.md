@@ -33,7 +33,7 @@ Client side can add `package-lock.json -diff` to `.gitattributes`
 ## Roadmap
 
 - Interface for providing more custom args <http://sdk.vercel.ai/docs/ai-sdk-core/settings>
-- Benchmarking performance (obviously will be subjective comparison)
+- Performance Benchmarking (manual)
 - Run on previous commits
 - Run on commits in date range, manually approve/deny all changes or ask it to try again
 - Might as well have a frontend for the above

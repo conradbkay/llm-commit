@@ -2,7 +2,9 @@
   "name": "llm-commit",
   "type": "module",
   "version": "1.0.0",
-  "bin": "./bin/llm-commit.cjs",
+  "bin": {
+    "llm-commit": "bin/llm-commit.cjs"
+  },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "description": "Turns diffs into concise, readable git commit messages",

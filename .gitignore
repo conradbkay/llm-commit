@@ -1,6 +1,7 @@
-node_modules
-.env
-.vscode
+lib/
+
+node_modules/
+outputs/
 diff.txt
-outputs
-lib
+.vscode
+.env
