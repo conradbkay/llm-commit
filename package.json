@@ -1,7 +1,7 @@
 {
   "name": "llm-commit",
   "type": "module",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "bin": {
     "llm-commit": "bin/llm-commit.cjs"
   },
@@ -23,6 +23,7 @@
     "@ai-sdk/xai": "^1.1.13",
     "@promptbook/utils": "^0.86.10",
     "ai": "^4.1.53",
+    "clipboardy": "^4.0.0",
     "commander": "^13.1.0",
     "dotenv": "^16.4.7",
     "globby": "~14.0.2",

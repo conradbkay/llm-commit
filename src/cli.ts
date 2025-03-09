@@ -1,9 +1,11 @@
 import { config } from 'dotenv'
 config()
 
+import { writeFile } from 'fs/promises'
 import process from 'node:process'
 import { OptionValues, program } from 'commander'
 import pc from 'picocolors'
+import clipboard from 'clipboardy'
 import { oraPromise } from 'ora'
 // todo make us not have to write file extension
 import { DEFAULT_TOKENS, defaultProvider, providerData } from './constants.js'
@@ -20,14 +22,15 @@ export const run = async () => {
       .option('-t, --max-tokens <tokens>', 'max tokens')
       .option('-o, --out-path <path>', 'write path for full LLM output')
       .option(
+        '-u, --unstaged',
+        'Use unstaged changes (omits --cached in git diff)'
+      )
+      .option('-c, --copy', 'copies output to clipboard')
+      .option(
         '-r, --reason-tokens <reasonTokens>',
         'enable reasoning/thinking for eligible models'
       )
-      .option(
-        '-s, --silent',
-        'do not print output (should only be used with --out-path)'
-      )
-      .option('-c, --cached', 'whether to use staged files for git diff')
+      .option('-s, --silent', 'do not print output')
       .action(commanderActionEndpoint)
 
     await program.parseAsync(process.argv)
@@ -44,7 +47,8 @@ export type CliOptions = OptionValues &
     reasonTokens: number
     outPath: string
     silent: boolean
-    cached: boolean
+    unstaged: boolean
+    copy: boolean
   }>
 
 const commanderActionEndpoint = async (options: CliOptions = {}) => {
@@ -59,8 +63,9 @@ export const runCli = async (
     outPath,
     reasonTokens,
     silent,
-    cached,
-    provider
+    unstaged,
+    provider,
+    copy
   }: CliOptions
 ) => {
   if (!provider) {
@@ -83,16 +88,37 @@ export const runCli = async (
   console.log('Running ' + useModelId)
 
   try {
-    await oraPromise(
+    const llmResult = await oraPromise(
       genCommitMessage({
         model,
         maxTokens: maxTokens || DEFAULT_TOKENS,
         reasonTokens,
-        outPath,
-        silent,
-        diffOptions: { cached }
+        diffOptions: { cached: !unstaged }
       })
     )
+
+    if (!llmResult.text) {
+      throw new Error('No commit message generated')
+    }
+
+    if (copy) {
+      clipboard.write(llmResult.text) // if this were browser we'd want to catch err in case we don't have permission
+    }
+
+    if (!silent) {
+      console.log('\n' + llmResult.text)
+    }
+
+    if (outPath) {
+      try {
+        await writeFile(outPath, JSON.stringify(llmResult), 'utf8')
+      } catch (writeError) {
+        // We don't want to fail the entire operation if just the output file fails
+        console.error(
+          `Warning: Failed to write output to ${outPath}: ${writeError.message}`
+        )
+      }
+    }
   } catch (err) {
     // seems like ai-sdk already handles any retryable errors, just error includes a lot of the request and res which seems unnecessary
     if ('data' in err && 'error' in err.data) {

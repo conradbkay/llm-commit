@@ -23,12 +23,13 @@ of the involved types.
 It turns out that we don't have _that_ many places that access these
 fields directly and were affected, but we have more than we strictly
 should have, because our low-level helper functions have been designed
-to have intimate knowledge of how the pipes work.</example>`,
+to have intimate knowledge of how the pipes work.
+</example>`,
 
   'think-first':
     '\n\nPlease make sure your commit message comes after any thinking/reasoning about the code changes',
   brevity:
-    '\n\nMake sure the summary is less than 75 characters, and ideally under 50 characters long. Do not include a body unless it is necessary'
+    '\n\nMake sure the summary is less than 75 characters, and ideally under 50 characters long. Include a body only when necessary (complex changes)'
 } as const
 
 const thinkingInstructionKeys = ['logic', 'think-first']
