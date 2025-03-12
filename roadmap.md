@@ -4,7 +4,8 @@
 
 <https://cbea.ms/git-commit/> writing good commit messages
 
-- Probably should automatically add --staged if no diff found, or just have that as default
+- Optional footer with what model and code generated the message
+- Make model surround actual message with tag or something so copy can work better
 - Interface for providing more custom args <http://sdk.vercel.ai/docs/ai-sdk-core/settings>
 - Performance Benchmarking (manual)
 - Run on previous commits
