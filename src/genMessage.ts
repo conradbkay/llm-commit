@@ -25,7 +25,7 @@ export const genCommitMessage = async ({
   const prompt = genPrompt({
     diff,
     fileStructure,
-    disableInstructionKeys: reasonTokens ? ['logic'] : undefined
+    useLogic: !reasonTokens
   })
 
   const llmResult = await generateText({

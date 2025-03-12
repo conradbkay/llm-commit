@@ -2,7 +2,7 @@ const system =
   "You are a senior software engineer working as the lead of a popular open-source project. You are presented with the codebase's file structure and the commit diff, and must understand the changes, then write a proper commit message for them"
 
 const logic =
-  "\n\nBefore outputting the commit, think for a few sentences about what the diffs mean, creating a list of changes. Make sure the summary generalizes to most of the changes and doesn't just focus on one. Try generating a summary, then saying whether it is general, comprehensive, and concise then trying to make a better one. Use that one in your final message rather than coming up with a separate summary.\n\nDo Not Hallucinate.\n\nMake sure your commit message comes after any thinking/reasoning about the code changes"
+  "Before outputting the commit, think for a few sentences about what the diffs mean, creating a list of changes. Make sure the summary generalizes to most of the changes and doesn't just focus on one. Try generating a summary, then saying whether it is general, comprehensive, and concise then trying to make a better one. Use that one in your final message rather than coming up with a separate summary.\n\nDo Not Hallucinate.\n\nMake sure your commit message comes after any thinking/reasoning about the code changes"
 
 const examples = [
   'feat: use locally hosted ollama llm',
@@ -30,13 +30,13 @@ const main = `Guidelines:
 export type GenPromptOptions = {
   diff: string
   fileStructure: string[]
-  disableInstructionKeys?: string[]
+  useLogic: boolean
 }
 
 export const genPrompt = ({
   diff,
   fileStructure,
-  disableInstructionKeys
+  useLogic
 }: GenPromptOptions) => {
   return {
     system,
@@ -44,7 +44,7 @@ export const genPrompt = ({
       // apparently long context (20k+) at the top performs a lot better so put diff there
       {
         role: 'user' as const,
-        content: `<diff>${diff}</diff>\n\n<files>${fileStructure.join('\n')}\n</files>\n\n${examples}\n\n${main}`
+        content: `<diff>${diff}</diff>\n\n<files>${fileStructure.join('\n')}\n</files>\n\n${examples.map((ex) => `<example>${ex}</example>`)}\n\n${main}${useLogic ? '\n\n' + logic : ''}`
       }
     ]
   }

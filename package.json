@@ -1,7 +1,7 @@
 {
   "name": "llm-commit",
   "type": "module",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "bin": {
     "llm-commit": "bin/llm-commit.cjs"
   },
